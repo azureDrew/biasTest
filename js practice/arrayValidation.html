@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body>
+        <div id = "out"></div>
+
+        <script>
+            out = document.getElementById("out");
+
+            // Returns true if for every element in an array, 
+            // each element as input to the function fn results in true.
+            // If any element of said array results in false, 
+            // the whole call returns false. 
+            passesCriteria = (arr, fn = Boolean) => arr.every(fn);
+
+            // If all elements of array are greater than 1, return true
+            // If any element is not greater than 1, return false.
+            function myCriteria(x){
+                if(x > 2) return true;
+                else return false;
+            }
+            out.innerHTML = passesCriteria([4, 2, 3], myCriteria); 
+
+
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+
+            // Return true if a given input passes filter
+            // Returns false if given input does not.
+            function myFilter(age){
+                if(age >= 18) return true;
+                else return false;
+            }
+
+            ages = [15,16,17,18,19,20,21];
+
+            // Displays out of "ages" after all values have been filtered
+            out.innerHTML = ages.filter(myFilter);
+
+
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+
+
+            out.innerHTML = "";
+
+            // Outputs the "age" value to the "out" div...
+            function myFn(age){
+                out.innerHTML += age + "<br>";
+            }
+
+            ages = [15,16,17,18,19,20,21];
+
+            // For each element of the ages array, calls "myFn" on that element.
+            ages.forEach(myFn);
+            out.innerHTML = "";
+
+
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////
+
+        </script>
+    </body>
+</html>

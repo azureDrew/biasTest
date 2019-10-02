@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>
+      // Need to import 30-second js from git...
+      const escapeHTML = str => str.replace(
+         /[&<>'"]/g,
+         tag =>
+            ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+            }[tag] || tag)
+      );
+
+		// Predefined forms...
+		// These are the templates from which code should be generated.
+		forms = {
+			userProfileForm: {
+				name: {maxLen: 16, minLen: 2},
+				myNum: {isNum: true},
+				myNums: {isNumArray: true, maxLen: 100}, 
+				myColor: {maxLen: 16, minLen: 3},
+				myRandStr: {regex: /scr*/ig},
+				myBool: {isType: "boolean"}
+			}
+		};
+
+		// The data entered into a form by a user client side.
+		userEntries = [
+         "userProfileForm",
+			{field: "name", val: "Andrew"},
+			{field: "myNum", val: "255"},
+			{field: "myColor", val: "Green"},
+			{field: "myNums", val: "1,2,3,4"},
+			{field: "myRandStr", val: "<script>"},
+			{field: "myBool", val: true}
+		];
+	</script>
+</head>
+
+<body>
+	<div id = "out"></div>
+
+	<script>
+      let form = {};
+
+      // Checks if each element of an array results in function "fn" returning true.
+      passesCriteria = (arr, fn = Boolean) => arr.every(fn);
+      
+      // Check if given input passes the necessary requirments of the form definition.
+      function validateInput(input){
+         if(form[input.field] == null) return false;
+         for(req in form[input.field]){
+            switch(req){
+               case "regex": // If string is not formated as defined, fails
+                  if(!form[input.field][req].test(input.val)) return false;
+                  break; 
+
+               case "maxLen": // If string is longer than defined, fails
+                  if(input.val.length > form[input.field][req]) return false;
+                  break;  
+
+               case "minLen": // If string is shorter than defined, fails
+                  if(input.val.length < form[input.field][req]) return false;
+                  break; 
+
+               case "isType": // If input is not of the defined type, fails
+                  if(typeof input.val != form[input.field][req]) return false;
+                  break;  
+
+               case "isNum": // If input is not a number or a string of a number, fails
+                  if(isNaN(input.val) == form[input.field][req]) return false;
+                  break;  
+                  
+               case "isNumArray": // If string is not camma seperated list of numbers, fails
+                  if(!passesCriteria(input.val.split(","), a => !isNaN(a))) return false;
+            }
+         }
+         return true;
+      }
+
+      // Insert data into db
+      function dbInsert(data){
+         return true;
+      }
+
+		// If "data" passes the criteria in "form" attempt a dbInsert and return result,
+      // If it does not or an error occures (due to "data" bad-format), return false.
+		function post(jsonData){ try{
+         // Get array of data, pop the "formName" from array, then scrub all inputs.
+         data = JSON.parse(jsonData);
+         form = forms[data.shift()];
+         data.forEach(entry => entry.val = 
+            typeof entry.val == "string" ? escapeHTML(entry.val) : entry.val
+         );
+
+         // If the data input is validated; return result of dbInsert(), else false.
+         return data.length == Object.keys(form).length && 
+            passesCriteria(data, validateInput) ?
+               dbInsert(data) : false;
+      } catch {return false;}}
+
+		jsonData = JSON.stringify(userEntries);
+      document.getElementById("out").innerHTML += post(jsonData);
+	</script>
+</body>
+</html>
